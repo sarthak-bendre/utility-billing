@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Utility Billing</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">⚡</span>
+      <div>
+        <strong>UtilityDesk</strong>
+        <small>Billing &amp; Complaints</small>
+      </div>
+    </div>
+    <nav>
+      <a href="#dashboard" data-view="dashboard" class="active">📊 Dashboard</a>
+      <a href="#customers" data-view="customers">👥 Customers</a>
+      <a href="#bills" data-view="bills">🧾 Bills</a>
+      <a href="#complaints" data-view="complaints">🛠️ Complaints</a>
+    </nav>
+    <footer>Flask · MySQL · REST</footer>
+  </aside>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view active">
+      <header class="page-head">
+        <div><h1>Dashboard</h1><p class="muted">Overview of customers, billing and complaint resolution</p></div>
+        <button class="btn ghost" onclick="loadDashboard()">↻ Refresh</button>
+      </header>
+      <div class="kpis" id="kpis"></div>
+      <div class="grid-2">
+        <div class="card"><h3>Monthly billing (last 6 months)</h3><div class="chart-box"><canvas id="chart-monthly"></canvas></div></div>
+        <div class="card"><h3>Complaints by status</h3><div class="chart-box"><canvas id="chart-complaints"></canvas></div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3>Recent complaints</h3><div id="dash-complaints"></div></div>
+        <div class="card"><h3>Overdue bills</h3><div id="dash-overdue"></div></div>
+      </div>
+    </section>
+
+    <!-- CUSTOMERS -->
+    <section id="view-customers" class="view">
+      <header class="page-head">
+        <div><h1>Customers</h1><p class="muted">Manage customer accounts and connections</p></div>
+        <button class="btn primary" onclick="openCustomerForm()">+ Add customer</button>
+      </header>
+      <div class="toolbar">
+        <input type="search" id="cust-q" placeholder="Search name, account, email, phone…">
+        <select id="cust-type"><option value="">All connections</option><option value="residential">Residential</option><option value="commercial">Commercial</option></select>
+      </div>
+      <div class="card flush"><div id="cust-table"></div></div>
+      <div class="pager" id="cust-pager"></div>
+    </section>
+
+    <!-- BILLS -->
+    <section id="view-bills" class="view">
+      <header class="page-head">
+        <div><h1>Bills</h1><p class="muted">Electricity and water bills, auto-calculated from meter readings</p></div>
+        <button class="btn primary" onclick="openBillForm()">+ Generate bill</button>
+      </header>
+      <div class="toolbar">
+        <input type="search" id="bill-q" placeholder="Search bill no, customer, account…">
+        <select id="bill-utility"><option value="">All utilities</option><option value="electricity">Electricity</option><option value="water">Water</option></select>
+        <select id="bill-status"><option value="">All statuses</option><option value="unpaid">Unpaid</option><option value="overdue">Overdue</option><option value="paid">Paid</option></select>
+      </div>
+      <div class="card flush"><div id="bill-table"></div></div>
+      <div class="pager" id="bill-pager"></div>
+    </section>
+
+    <!-- COMPLAINTS -->
+    <section id="view-complaints" class="view">
+      <header class="page-head">
+        <div><h1>Complaints</h1><p class="muted">Register, track and resolve service complaints</p></div>
+        <button class="btn primary" onclick="openComplaintForm()">+ Register complaint</button>
+      </header>
+      <div class="toolbar">
+        <input type="search" id="comp-q" placeholder="Search ticket, subject, customer…">
+        <select id="comp-status"><option value="">All statuses</option><option value="open">Open</option><option value="in_progress">In progress</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select>
+        <select id="comp-priority"><option value="">All priorities</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+        <select id="comp-category"><option value="">All categories</option><option value="electricity">Electricity</option><option value="water">Water</option><option value="billing">Billing</option><option value="meter">Meter</option><option value="other">Other</option></select>
+      </div>
+      <div class="card flush"><div id="comp-table"></div></div>
+      <div class="pager" id="comp-pager"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true">
+      <header><h2 id="modal-title"></h2><button class="icon-btn" onclick="closeModal()" aria-label="Close">✕</button></header>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
